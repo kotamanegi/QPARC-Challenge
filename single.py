@@ -9,7 +9,7 @@ executor = QulacsExecutor()
 
 # Define input settings
 n_shots = 1000
-initial_state = 0b10101010
+initial_state = 0b00110011
 depth = 2
 
 run_single_experiment(

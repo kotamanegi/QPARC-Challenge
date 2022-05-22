@@ -17,6 +17,10 @@ from qparcchallenge2022.ansatz.rxzx_ansatz_circuit import (
     rxzx_ansatz_circuit,
     rxzx_ansatz_circuit_theta_len,
 )
+from qparcchallenge2022.ansatz.watle_uccs_circuit import (
+    watle_uccs_circuit,
+    watle_uccs_circuit_theta_len,
+)
 
 
 class AnsatzType(Enum):
@@ -24,6 +28,7 @@ class AnsatzType(Enum):
     qulacs_ansatz_circuit = 2
     kotamanegi_ansatz_circuit = 3
     rxzx_ansatz_circuit = 4
+    watle_uccs_circuit = 5
 
 
 def get_ansatz_generator(name: AnsatzType, *, n_qubits: int, depth: int):
@@ -40,6 +45,9 @@ def get_ansatz_generator(name: AnsatzType, *, n_qubits: int, depth: int):
     elif name == AnsatzType.rxzx_ansatz_circuit:
         circuit_generator_module = rxzx_ansatz_circuit
         theta_list_len = rxzx_ansatz_circuit_theta_len(n_qubits, depth)
+    elif name == AnsatzType.watle_uccs_circuit:
+        circuit_generator_module = watle_uccs_circuit
+        theta_list_len = watle_uccs_circuit_theta_len(n_qubits, depth)
 
     return (
         partial(circuit_generator_module, n_qubits=n_qubits, depth=depth),

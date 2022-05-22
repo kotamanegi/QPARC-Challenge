@@ -54,7 +54,7 @@ def hamil_think(jw_qulacs_hamiltonian):
     return (all_Z, one_XX, two_XX)
 
 
-def make_pair_patan(n_qubit):
+def make_pair_patan(n_qubit,random_map=True):
     ha_qubit = n_qubit // 2
     if ha_qubit % 2 == 0:
         loop_qubit = ha_qubit - 1
@@ -62,8 +62,11 @@ def make_pair_patan(n_qubit):
         loop_qubit = ha_qubit
 
     pata_XXU = []
-    sya_hai = random.sample(list(range(0, ha_qubit)), ha_qubit)
 
+    if random_map:
+        sya_hai = random.sample(list(range(0, ha_qubit)), ha_qubit)
+    else:
+        sya_hai = list(range(0, ha_qubit))
     pata_Uyobi = []
     pata_Dyobi = []
 
