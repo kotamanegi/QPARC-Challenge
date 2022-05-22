@@ -13,12 +13,17 @@ from qparcchallenge2022.ansatz.ry_ansatz_circuit import (
     ry_ansatz_circuit,
     ry_ansatz_circuit_theta_len,
 )
+from qparcchallenge2022.ansatz.rxzx_ansatz_circuit import (
+    rxzx_ansatz_circuit,
+    rxzx_ansatz_circuit_theta_len,
+)
 
 
 class AnsatzType(Enum):
     ry_ansatz_circuit = 1
     qulacs_ansatz_circuit = 2
     kotamanegi_ansatz_circuit = 3
+    rxzx_ansatz_circuit = 4
 
 
 def get_ansatz_generator(name: AnsatzType, *, n_qubits: int, depth: int):
@@ -32,7 +37,12 @@ def get_ansatz_generator(name: AnsatzType, *, n_qubits: int, depth: int):
     elif name == AnsatzType.kotamanegi_ansatz_circuit:
         circuit_generator_module = kotamanegi_ansatz_circuit
         theta_list_len = kotamanegi_ansatz_circuit_theta_len(n_qubits, depth)
+    elif name == AnsatzType.rxzx_ansatz_circuit:
+        circuit_generator_module = rxzx_ansatz_circuit
+        theta_list_len = rxzx_ansatz_circuit_theta_len(n_qubits, depth)
+
     return (
         partial(circuit_generator_module, n_qubits=n_qubits, depth=depth),
         theta_list_len,
     )
+
