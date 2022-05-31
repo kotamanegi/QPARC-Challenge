@@ -52,8 +52,8 @@ class QulacsExecutor:
         multiplicity = 1
         charge = 0
         distance = 1.0
-        geometry = [["H", [0, 0, distance * i]] for i in range(6)]
-        description = "H6"
+        geometry = [["H", [0, 0, distance * i]] for i in range(4)]
+        description = "H4"
         molecule = MolecularData(geometry, basis, multiplicity, charge, description)
         molecule = run_pyscf(molecule, run_scf=1, run_fci=1)
         self.hf_energy = molecule.hf_energy

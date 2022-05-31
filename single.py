@@ -23,7 +23,7 @@ initial_state = 0b10101010
 depth = 2
 
 run_single_experiment(
-    method="BFGS",
+    method="heat-annealing",
     n_shots=n_shots,
     initial_state=initial_state,
     depth=depth,
