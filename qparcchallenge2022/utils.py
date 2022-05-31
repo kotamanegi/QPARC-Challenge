@@ -54,6 +54,57 @@ def hamil_think(jw_qulacs_hamiltonian):
     return (all_Z, one_XX, two_XX)
 
 
+def isprime(n):
+    i=2
+    while i*i<=n:
+        if n%i==0:
+            return False
+        i+=1
+    return True
+
+def make_uuuu_dddd_patan(ha_qubit):
+    #up-up-up-up を　作る
+    n=ha_qubit
+    while (not isprime(n-1)):
+        n+=1
+    n-=1
+
+    print(n)
+
+    ret = []
+    for i in range(n*n+n):
+        ret.append([])
+
+    for a in range(n):
+        for b in range(a+1,n):
+            for x in range(n):
+                if x==a or x==b:
+                    continue
+                y=( (a+b)*x - a*b + n*n)%n
+                ret[x*n+y].append((a,b))
+            ret[n*n+((a+b)%n)].append((a,b)) # 無限遠点
+
+        for y in range(n):
+            if y==a*a%n:
+                continue
+            ret[a*n+y].append((a,n)) # 傾き∞の無限遠点　に、　n bit がある。
+
+    use_pairs = []
+    for x in range(n+1):
+        for y in range(n):
+            if x<n and y == x*x%n:
+                continue
+            now_pair = []
+            now_pair_d = []
+            for soku in ret[x*n+y]:
+                (a,b) = soku
+                if b < ha_qubit:
+                    now_pair.append((a,b)) # for uuuu
+                    now_pair_d.append((a+ha_qubit,b+ha_qubit)) #dddd
+            use_pairs.append(now_pair + now_pair_d)
+    return use_pairs
+
+
 def make_pair_patan(n_qubit):
     ha_qubit = n_qubit // 2
     if ha_qubit % 2 == 0:
@@ -63,9 +114,6 @@ def make_pair_patan(n_qubit):
 
     pata_XXU = []
     sya_hai = random.sample(list(range(0, ha_qubit)), ha_qubit)
-
-    pata_Uyobi = []
-    pata_Dyobi = []
 
     for i in range(loop_qubit):
         XX_pairs = []
@@ -82,19 +130,6 @@ def make_pair_patan(n_qubit):
             a = sya_hai[a]
             b = sya_hai[b]
             XX_pairs.append((min(a, b), max(a, b)))
-
-        if ha_qubit == 5 or ha_qubit == 6:
-            (a, b) = XX_pairs[-1]
-            (c, d) = XX_pairs[-2]
-            yobi_pairs_A = [(min(a, c), max(a, c)), (min(b, d), max(b, d))]
-            yobi_pairs_B = [(min(a, d), max(a, d)), (min(b, c), max(b, c))]
-            if ha_qubit == 6:
-                yobi_pairs_A.append(XX_pairs[0])
-                yobi_pairs_B.append(XX_pairs[0])
-            yobi_pairs_A.sort()
-            yobi_pairs_B.sort()
-            pata_Uyobi.append(yobi_pairs_A)
-            pata_Uyobi.append(yobi_pairs_B)
 
         XX_pairs.sort()
         pata_XXU.append(XX_pairs)
@@ -116,25 +151,13 @@ def make_pair_patan(n_qubit):
             b = sya_hai[b] + ha_qubit
             XX_pairs.append((min(a, b), max(a, b)))
 
-        if ha_qubit == 5 or ha_qubit == 6:
-            (a, b) = XX_pairs[-1]
-            (c, d) = XX_pairs[-2]
-            yobi_pairs_A = [(min(a, c), max(a, c)), (min(b, d), max(b, d))]
-            yobi_pairs_B = [(min(a, d), max(a, d)), (min(b, c), max(b, c))]
-            if ha_qubit == 6:
-                yobi_pairs_A.append(XX_pairs[0])
-                yobi_pairs_B.append(XX_pairs[0])
-            yobi_pairs_A.sort()
-            yobi_pairs_B.sort()
-            pata_Dyobi.append(yobi_pairs_A)
-            pata_Dyobi.append(yobi_pairs_B)
-
         XX_pairs.sort()
         pata_XXD.append(XX_pairs)
 
-    pata_yobi = []
-    for i in range(len(pata_Uyobi)):
-        pata_yobi.append(pata_Uyobi[i] + pata_Dyobi[i])
+    if ha_qubit >= 5 :
+        pata_yobi = make_uuuu_dddd_patan(ha_qubit).copy()
+    else:
+        pata_yobi = []
 
     return (pata_XXU, pata_XXD, pata_yobi)
 
@@ -142,6 +165,7 @@ def make_pair_patan(n_qubit):
 def get_energy_EX(
     circuit, n_qubit, n_shots, state, hamiltonian_data, pata_data, executor
 ):
+    print('get')
     (all_Z, one_XX, two_XX) = hamiltonian_data
     (pata_XXU, pata_XXD, pata_yobi) = pata_data
     ha_qubit = n_qubit // 2
